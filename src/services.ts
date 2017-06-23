@@ -8,12 +8,12 @@ import { MonacoLanguages } from "./languages";
 import { MonacoWorkspace } from "./workspace";
 import { ConsoleWindow } from "./console-window";
 
-export function createMonacoServices(): BaseLanguageClient.IServices {
+export function createMonacoServices(rootUri? : string|null): BaseLanguageClient.IServices {
     const m2p = new MonacoToProtocolConverter();
     const p2m = new ProtocolToMonacoConverter();
     return {
         languages: new MonacoLanguages(p2m, m2p),
-        workspace: new MonacoWorkspace(m2p),
+        workspace: new MonacoWorkspace(m2p, rootUri),
         window: new ConsoleWindow()
     }
 }

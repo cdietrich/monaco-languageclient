@@ -11,19 +11,16 @@ const ReconnectingWebSocket = require('reconnecting-websocket');
 
 // register Monaco languages
 monaco.languages.register({
-    id: 'json',
-    extensions: ['.json', '.bowerrc', '.jshintrc', '.jscsrc', '.eslintrc', '.babelrc'],
-    aliases: ['JSON', 'json'],
-    mimetypes: ['application/json'],
+    id: 'mydsl',
+    extensions: ['.mydsl'],
+    aliases: ['MYDSL', 'mydsl'],
+    mimetypes: ['application/mydsl'],
 });
 
 // create Monaco editor
-const value = `{
-    "$schema": "http://json.schemastore.org/coffeelint",
-    "line_endings": "unix"
-}`;
+const value = `Hello World!`;
 monaco.editor.create(document.getElementById("container")!, {
-    model: monaco.editor.createModel(value, 'json', monaco.Uri.parse('inmemory://model.json'))
+    model: monaco.editor.createModel(value, 'mydsl', monaco.Uri.parse('file:///home/dietrich/git/xtext-languageserver-example/demo/a.mydsl'))
 });
 
 // create the web socket
@@ -40,13 +37,14 @@ listen({
     }
 });
 
-const services = createMonacoServices();
+const services = createMonacoServices("file:///home/dietrich/git/xtext-languageserver-example/demo/");
+console.log(services.workspace.rootUri);
 function createLanguageClient(connection: MessageConnection): BaseLanguageClient {
     return new BaseLanguageClient({
         name: "Sample Language Client",
         clientOptions: {
             // use a language id as a document selector
-            documentSelector: ['json'],
+            documentSelector: ['mydsl'],
             // disable the default error handler
             errorHandler: {
                 error: () => ErrorAction.Continue,
@@ -65,7 +63,7 @@ function createLanguageClient(connection: MessageConnection): BaseLanguageClient
 
 function createUrl(path: string): string {
     const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-    return `${protocol}://${location.host}${path}`;
+    return `${protocol}://localhost:4389`;
 }
 
 function createWebSocket(url: string): WebSocket {
@@ -75,7 +73,8 @@ function createWebSocket(url: string): WebSocket {
         reconnectionDelayGrowFactor: 1.3,
         connectionTimeout: 10000,
         maxRetries: Infinity,
-        debug: false
+        debug: true,
+
     };
     return new ReconnectingWebSocket(url, undefined, socketOptions);
 }
