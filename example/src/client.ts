@@ -7,24 +7,23 @@ import {
     MonacoLanguageClient, CloseAction, ErrorAction,
     MonacoServices, createConnection
 } from 'monaco-languageclient';
-import normalizeUrl = require('normalize-url');
+//import normalizeUrl = require('normalize-url');
 const ReconnectingWebSocket = require('reconnecting-websocket');
 
 // register Monaco languages
 monaco.languages.register({
-    id: 'json',
-    extensions: ['.json', '.bowerrc', '.jshintrc', '.jscsrc', '.eslintrc', '.babelrc'],
-    aliases: ['JSON', 'json'],
-    mimetypes: ['application/json'],
+    id: 'mydsl',
+    extensions: ['.mydsl'],
+    aliases: ['MYDSL', 'mydsl'],
+    mimetypes: ['application/mydsl'],
 });
 
 // create Monaco editor
-const value = `{
-    "$schema": "http://json.schemastore.org/coffeelint",
-    "line_endings": "unix"
-}`;
+const value = `Hello A!
+Hello B!
+Hello you from C!`;
 const editor = monaco.editor.create(document.getElementById("container")!, {
-    model: monaco.editor.createModel(value, 'json', monaco.Uri.parse('inmemory://model.json')),
+    model: monaco.editor.createModel(value, 'mydsl', monaco.Uri.parse('inmemory://demo/model.mydsl')),
     glyphMargin: true,
     lightbulb: {
         enabled: true
@@ -35,8 +34,8 @@ const editor = monaco.editor.create(document.getElementById("container")!, {
 MonacoServices.install(editor);
 
 // create the web socket
-const url = createUrl('/sampleServer')
-const webSocket = createWebSocket(url);
+// const url = createUrl('/sampleServer')
+const webSocket = createWebSocket('ws://localhost:4389/');
 // listen when the web socket is opened
 listen({
     webSocket,
@@ -53,7 +52,7 @@ function createLanguageClient(connection: MessageConnection): MonacoLanguageClie
         name: "Sample Language Client",
         clientOptions: {
             // use a language id as a document selector
-            documentSelector: ['json'],
+            documentSelector: ['mydsl'],
             // disable the default error handler
             errorHandler: {
                 error: () => ErrorAction.Continue,
@@ -67,11 +66,6 @@ function createLanguageClient(connection: MessageConnection): MonacoLanguageClie
             }
         }
     });
-}
-
-function createUrl(path: string): string {
-    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-    return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
 }
 
 function createWebSocket(url: string): WebSocket {
