@@ -6,6 +6,7 @@ import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
 import {
     MonacoLanguageClient, CloseAction, ErrorAction,
     MonacoServices, createConnection
+    //, Trace
 } from 'monaco-languageclient';
 //import normalizeUrl = require('normalize-url');
 const ReconnectingWebSocket = require('reconnecting-websocket');
@@ -42,6 +43,7 @@ listen({
     onConnection: connection => {
         // create and start the language client
         const languageClient = createLanguageClient(connection);
+        //languageClient.trace = Trace.Messages;
         const disposable = languageClient.start();
         connection.onClose(() => disposable.dispose());
     }
@@ -57,7 +59,7 @@ function createLanguageClient(connection: MessageConnection): MonacoLanguageClie
             errorHandler: {
                 error: () => ErrorAction.Continue,
                 closed: () => CloseAction.DoNotRestart
-            }
+            },
         },
         // create a language client connection from the JSON RPC connection on demand
         connectionProvider: {
