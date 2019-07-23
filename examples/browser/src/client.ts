@@ -5,23 +5,22 @@
 import { getLanguageService, TextDocument } from "vscode-json-languageservice";
 import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient/lib/monaco-converter';
 
-const LANGUAGE_ID = 'json';
-const MODEL_URI = 'inmemory://model.json'
+const LANGUAGE_ID = 'mydsl';
+const MODEL_URI = 'inmemory://model.mydsl'
 const MONACO_URI = monaco.Uri.parse(MODEL_URI);
 
 // register the JSON language with Monaco
 monaco.languages.register({
     id: LANGUAGE_ID,
-    extensions: ['.json', '.bowerrc', '.jshintrc', '.jscsrc', '.eslintrc', '.babelrc'],
-    aliases: ['JSON', 'json'],
-    mimetypes: ['application/json'],
+    extensions: ['.mydsl'],
+    aliases: ['MYDSL', 'mydsl'],
+    mimetypes: ['application/mydsl'],
 });
 
 // create the Monaco editor
-const value = `{
-    "$schema": "http://json.schemastore.org/coffeelint",
-    "line_endings": "unix"
-}`;
+const value = `Hello A!
+Hello B!
+Hello you from A!`;
 monaco.editor.create(document.getElementById("container")!, {
     model: monaco.editor.createModel(value, LANGUAGE_ID, MONACO_URI),
     glyphMargin: true,

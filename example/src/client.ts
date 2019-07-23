@@ -35,7 +35,7 @@ MonacoServices.install(editor);
 
 // create the web socket
 // const url = createUrl('/sampleServer')
-const webSocket = createWebSocket('ws://localhost:4389/');
+const webSocket = createWebSocket('ws://localhost:8080/demo');
 // listen when the web socket is opened
 listen({
     webSocket,
